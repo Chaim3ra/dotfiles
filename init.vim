@@ -13,10 +13,14 @@ Plug 'itchyny/lightline.vim'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'folke/lsp-colors.nvim'
+Plug 'fatih/vim-go'
 call plug#end()
 
 syntax on
 colorscheme vim-monokai-tasty
+set tabstop=4
+set shiftwidth=4
+set expandtab
 set nu
 set mouse=a
 set signcolumn=number
@@ -78,10 +82,15 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap("n", "<space>f", '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
 end
 
+
+local check_back_space = function()
+    local col = vim.fn.col('.') - 1
+    return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s')
+end
 
 local cmp = require('cmp')
   cmp.setup {
@@ -122,7 +131,7 @@ local cmp = require('cmp')
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "pyright","html","jsonls","tsserver","tailwindcss","svelte"}
+local servers = { "pyright","html","jsonls","tsserver","tailwindcss","svelte","gopls"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -183,15 +192,4 @@ EOF
 
 
 
-"DIY autoclosing
-inoremap (; ();<left><left>
-inoremap [; [];<left><left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap {<cr> {<cr>}<esc>O
-inoremap (<cr> (<cr>)<esc>O
-inoremap [<cr> [<cr>]<esc>O
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap ` ``<left>
-inoremap ``` ```<cr>```<esc>O
+
